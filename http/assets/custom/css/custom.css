@@ -1,0 +1,35 @@
+#full-screen-container {
+    padding: 15px
+}
+
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    display: table;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    color: #FFF;
+    font-size: 70px;
+}
+
+#loading-overlay div{
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center
+}
+
+#loading-overlay #close-spinner {
+    position: fixed;
+    font-size: 7rem;
+    color: #2E2E10;
+    top: 2.5rem;
+    right: 2.5rem;
+    opacity: 0.5;
+    transition: color 1s linear;
+    cursor: pointer;
+}
+
+#loading-overlay #close-spinner:hover {
+    color: #5F5F5F;
+}
