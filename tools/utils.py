@@ -39,13 +39,25 @@ def getFolderSize(path, formatted=False):
 
 def timeFormat(timestamp):
     """
-    Format timestamp (nb of sec, float) into the right unit for human readable
-    display.
+    Format timestamp into the right unit for human readable display.
+    timestamp -- either a float (number of seconds) or a datetime object.
     """
+    try:
+        # timestamp is a datetime?
+        timestamp = time.mktime(timestamp.timetuple())
+    except:
+        pass  # timestamp is already a float
+    if timestamp < 10 ** -3:
+        return "%.0fus, %0fns" % (timestamp * 10 ** 6,
+                                  (timestamp * 10 ** 6 -
+                                   int(timestamp * 10 ** 6)) * 1000)
     if timestamp < 1:
-        return "%.0fms" % (timestamp * 1000)
+        return "%.0fms, %.0fus" % (timestamp * 1000,
+                                   (timestamp * 1000 -
+                                    int(timestamp * 1000)) * 1000)
     if timestamp < 60:
-        return "%.0fs" % (timestamp)
+        return "%.0fs, %.0fms" % (timestamp,
+                                  (timestamp - int(timestamp)) * 1000)
     if timestamp < 60 * 60:
         return "%.0fmin, %.0fs" % (math.floor(timestamp / 60), timestamp % 60)
     if timestamp < 60 * 60 * 24:
@@ -59,7 +71,6 @@ def timeFormat(timestamp):
                math.floor((timestamp / (60 * 60)) % 24),
                math.floor((timestamp / 60) % 60),
                timestamp % 60)
-
 
 def dateFormat(timestamp):
     """

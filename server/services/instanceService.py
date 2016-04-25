@@ -37,7 +37,7 @@ class InstanceService(Service):
             'status': False,
         }
 
-    def insert(self, name, save=None, port=None, status='Stopped', _id=None):
+    def insert(self, name, save=None, port=None, status='stopped', _id=None):
         logging.debug("Saving new instance: %s" % (name))
         if _id is None:
             _id = uuid4()

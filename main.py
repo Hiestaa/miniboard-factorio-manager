@@ -10,12 +10,13 @@ from threading import Thread
 import tornado
 from tornado.web import Application
 
-from conf import Conf
+from conf import Conf, getIp
 import log
 from server.model import Model
 from server.requestHandlers.templatesHandler import TemplatesHandler
 from server.requestHandlers.defaultHandler import DefaultHandler
 from server.requestHandlers.assetsHandler import AssetsHandler
+from server.requestHandlers.wsHandler import WSHandler
 
 
 def parse_args():
@@ -29,6 +30,8 @@ messages and -vvv enable DEBUG messages. Ignored if started using daemon.",
                         default=0)
     parser.add_argument('-q', '--quiet', action="store_true",
                         help="Remove ALL logging messages from the console.")
+    parser.add_argument('-a', '--adapter', action="store",
+                        help="Adapter's ip to show.", type=int, default=0)
     return parser.parse_args()
 
 
@@ -45,6 +48,7 @@ class Server(Thread):
         """
         super(Server, self).__init__()
         self._ns = ns
+        Conf['server']['ip'] = getIp(ns.adapter)
 
     def stop(self):
         ioloop = tornado.ioloop.IOLoop.instance()
@@ -80,6 +84,7 @@ class Server(Thread):
         # /[whatever] will display the corresponding template
         # other routes will display 404
         server_routes = [
+            (r"/websocket", WSHandler),
             (r"/assets/([a-zA-Z0-9_\/\.-]+)/?", AssetsHandler),
             (r"/([a-zA-Z0-9_/\.=-]*)/?", TemplatesHandler),
             (r"/(.+)/?", DefaultHandler)
@@ -87,7 +92,8 @@ class Server(Thread):
 
         # start the server.
         logging.info("Server Starts - %s state - %s:%s"
-                     % (Conf['state'], 'localhost', Conf['server']['port']))
+                     % (Conf['state'], Conf['server']['ip'],
+                        Conf['server']['port']))
         logging.debug("Debugging message enabled.")
         application = Application(server_routes, **server_settings)
         application.listen(Conf['server']['port'])

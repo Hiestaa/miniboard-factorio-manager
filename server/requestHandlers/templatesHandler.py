@@ -15,19 +15,21 @@ class TemplatesHandler(RequestHandler):
     """Handle the requests of the root page"""
     def get(self, filename=None):
         templateRoutes = {
-            'home': 'base.html',
-            'join': 'base.html',
+            'join': 'join.html',
             'manage': 'base.html',
             'saves': 'base.html',
             'monitor': 'base.html'
         }
         fullWidth = ['']
         if filename is None or not filename:
-            self.render('home.html', currentPage='home.html', fullWidth=True)
+            self.render(
+                'join.html', currentPage='home', fullWidth=False,
+                port=Conf['server']['port'], ip=Conf['server']['ip'])
         elif filename in templateRoutes:
             self.render(templateRoutes[filename],
                         currentPage=filename,
                         debug=Conf['state'] == 'DEBUG',
+                        port=Conf['server']['port'], ip=Conf['server']['ip'],
                         fullWidth=filename in fullWidth)
         elif filename.split('/')[0] in templateRoutes:
             splitted = filename.split('/')
@@ -39,6 +41,7 @@ class TemplatesHandler(RequestHandler):
             self.render(
                 templateRoutes[filename],
                 currentPage=filename, debug=Conf['state'] == 'DEBUG',
+                port=Conf['server']['port'], ip=Conf['server']['ip'],
                 fullWidth=filename in fullWidth,
                 **kwtargs)
         else:

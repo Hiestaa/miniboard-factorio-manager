@@ -34,7 +34,7 @@
         <div id="full-screen-container" style="display: none"></div>
         <div id="std-container">
             <nav class="uk-navbar uk-margin-bottom">
-                <a class="uk-navbar-brand uk-hidden-small" href="/"><i class="uk-icon-home"></i> Miniboard</a>
+                <a class="uk-navbar-brand uk-hidden-small {% if currentPage == 'home' %}uk-active{% end %}" href="/"><i class="uk-icon-home"></i> Miniboard - {{ip or 'localhost'}}</a>
                 <ul class="uk-navbar-nav">
                     <li class="{% if currentPage == 'join' %}uk-active{% end %}"><a href="/join">Join</a></li>
                     <li class="{% if currentPage == 'manage' %}uk-active{% end %}"><a href="/manage">Manage</a></li>
@@ -44,7 +44,7 @@
                 <div class="uk-navbar-brand uk-navbar-center uk-visible-small">Miniboard</div>
                 <ul class="uk-navbar-nav uk-navbar-flip uk-hidden-small">
                     <li class="uk-parent {% if currentPage == 'admin' or currentPage == 'tags' %}uk-active{% end %}" data-uk-dropdown="">
-                        <a href="#!">Mem: %, CPU: %</a>
+                        <a href="#!" id="system-usage">Mem: %, CPU: %</a>
                         <div style="" class="uk-dropdown uk-dropdown-navbar">
                             <ul class="uk-nav uk-nav-navbar">
                                 <li><a href="/monitor">More stats...</a></li>
@@ -65,12 +65,19 @@
         </div>
         <div id="loading-overlay" style="display: none"><i title="Close spinner" data-uk-tooltip="{pos: 'bottom-right'}" class="uk-icon uk-icon-close" id="close-spinner"></i><div><i class="fa fa-spinner fa-spin"></i></div></div>
 
+        <script type="text/javascript">
+            window.initData = {};
+            window.initData.port = "{{port}}";
+            window.initData.ip = "{{ip}}";
+        </script>
         <script src="/assets/jquery/jquery-2.1.1.min.js"></script>
         <script src="/assets/uikit/js/uikit.min.js"></script>
         <script src="/assets/uikit/js/components/pagination.min.js"></script>
         <script src="/assets/uikit/js/components/notify.min.js"></script>
         <script src="/assets/selectize/js/selectize.js"></script>
+        <script src="/assets/handlebars.js"></script>
         <script src="/assets/custom/js/utils.js"></script>
+        <script src="/assets/custom/js/wsCon.js"></script>
         {% block js %}
         {% end %}
     </body>
