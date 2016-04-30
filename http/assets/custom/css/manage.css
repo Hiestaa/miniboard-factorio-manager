@@ -1,0 +1,26 @@
+pre#logs {
+    height: 40vh;
+    max-height: 40vh;
+    padding: 10px;
+    background: #4b4b4b;
+    font: 12px/18px Consolas,monospace,serif;
+    color: #e8e8e8;
+    -moz-tab-size: 4;
+    tab-size: 4;
+    overflow: auto;
+    border: 1px solid #e5e5e5;
+    border-radius: 3px;
+}
+
+pre#logs .error {
+    font-weight: bold;
+    color: #ff464b;
+}
+
+#list-content .status .uk-badge {
+    font-size: 80%;
+    padding: 3px;
+    margin: 4px;
+    text-transform: capitalize;
+    border-radius: 5px;
+}

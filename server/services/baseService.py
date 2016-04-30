@@ -30,56 +30,22 @@ class Service(object):
 
     def schema(self):
         """
-        Note: override this function to enable schema-validation.
-        It should return a dict where keys are expected document fields
-        and values are set to True if the field is required, False otherwise
+        Note: override this function to return the schema of the table.
+        It should return a list of tuples containing expected document field
+        associated with a values set to whatever you like (still tbd)
         """
-        return {}
+        return []
 
-    def validate(self, query, strict=True):
+    def itm2dict(self, itm):
         """
-        Validate the query to ensure it matches the defined schema.
-        If the schema method is overrode to return a valid schema
-        object (a dict where keys are expected document fields, and values
-        are set to True if the field is required, False otherwise),
-        this function will check the query and ensure that there is no
-        unexpected or missing required keys (by raising a ModelException).
-        Returns the validated query.
-        If strict is set to False, the required keys won't be tested. This
-        can be useful to validate an update query, ensuring that the field
-        updated is not out of the schema.
+        Use the schema to build a dict from the item, where keys are fields
+        (column names) and values are cell values.
+        itm should be a list of values in column order.
         """
-        schema = self.schema()
-        schema_keys = set(schema)
-        # if there is no keys in the schema, exit
-        if len(schema_keys) == 0:
-            return query
-        required_schema_keys = set([k for k in schema_keys if schema[k]])
-
-        query_keys = set(query.keys())
-
-        # no unexpected keys: all the keys of the queries exist
-        # in the schema. An exception, the key _id, can be specified
-        # even
-        union = schema_keys | query_keys
-        if len(union) > len(schema_keys):
-            diff = query_keys - schema_keys
-            if len(diff) > 1 or '_id' not in diff:
-                raise ModelException(
-                    "The keys: %s are unexpected in the validated query."
-                    % str(query_keys - schema_keys))
-
-        if not strict:
-            return query
-
-        # all required keys are here
-        intersect = required_schema_keys & query_keys
-        if len(intersect) < len(required_schema_keys):
-            raise ModelException(
-                "The required keys: %s are missing in the validated query"
-                % str(required_schema_keys - query_keys))
-
-        return query
+        data = {}
+        for i, (k, v) in enumerate(self.schema()):
+            data[k] = itm[i]
+        return data
 
     def getById(self, _id, fields=None):
         """
@@ -89,15 +55,14 @@ class Service(object):
         """
         cur = self._connection.cursor()
         if fields is None:
-            cur.execute("SELECT * FROM %s WHERE _id=?"
-                        % (self._tableName), _id)
-            return cur.fetchone()
+            cur.execute("SELECT * FROM %s WHERE _id=?" % (self._tableName),
+                        (_id, ))
+            return self.itm2dict(cur.fetchone())
 
-        projection = self.validate({f: True for f in fields})
-        fields = ', '.join(projection)
+        fields = ', '.join(fields)
         cur.execute("SELECT %s FROM %s WHERE _id=?"
-                    % (fields, self._tableName), _id)
-        return cur.fetchone()
+                    % (fields, self._tableName), (_id,))
+        return self.itm2dict(cur.fetchone())
 
     def getOverallCount(self):
         cur = self._connection.cursor()
@@ -114,7 +79,7 @@ class Service(object):
 
     def deleteById(self, _id):
         cur = self._connection.cursor()
-        cur.execute("DELETE FROM %s WHERE _id=?" % (self._tableName), _id)
+        cur.execute("DELETE FROM %s WHERE _id=?" % (self._tableName), (_id,))
         self._connection.commit()
 
     def getAll(self):
@@ -123,6 +88,7 @@ class Service(object):
         """
         cur = self._connection.cursor()
         cur.execute("SELECT * FROM %s" % self._tableName)
+        return map(self.itm2dict, cur.fetchall())
 
     def set(self, _id, field, value):
         """
@@ -130,8 +96,7 @@ class Service(object):
         matching these ids
         will be
         """
-        self.validate({field: value})
-        cur = self._collection.cursor()
+        cur = self._connection.cursor()
         cur.execute("UPDATE %s SET %s=? WHERE _id=?"
-                    % (self._tableName, field), value, _id)
+                    % (self._tableName, field), (value, _id))
         self._connection.commit()

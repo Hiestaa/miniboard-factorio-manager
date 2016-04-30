@@ -14,7 +14,7 @@ class SystemUsageHandler(object):
 
     handlerKey = 'system-usage'
 
-    def __init__(self, writeMessage):
+    def __init__(self, writeMessage, error):
         super(SystemUsageHandler, self).__init__()
 
         self.writeMessage = writeMessage

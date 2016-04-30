@@ -33,3 +33,8 @@
 #loading-overlay #close-spinner:hover {
     color: #5F5F5F;
 }
+
+
+input.invalid {
+    border-color: red !important;
+}

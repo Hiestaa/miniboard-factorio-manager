@@ -34,7 +34,7 @@
         <div id="full-screen-container" style="display: none"></div>
         <div id="std-container">
             <nav class="uk-navbar uk-margin-bottom">
-                <a class="uk-navbar-brand uk-hidden-small {% if currentPage == 'home' %}uk-active{% end %}" href="/"><i class="uk-icon-home"></i> Miniboard - {{ip or 'localhost'}}</a>
+                <a class="uk-navbar-brand uk-hidden-small {% if currentPage == 'home' %}uk-active{% end %}" href="/"><i class="uk-icon-home"></i> Miniboard - {{initData.get('ip', 'localhost')}}</a>
                 <ul class="uk-navbar-nav">
                     <li class="{% if currentPage == 'join' %}uk-active{% end %}"><a href="/join">Join</a></li>
                     <li class="{% if currentPage == 'manage' %}uk-active{% end %}"><a href="/manage">Manage</a></li>
@@ -67,15 +67,17 @@
 
         <script type="text/javascript">
             window.initData = {};
-            window.initData.port = "{{port}}";
-            window.initData.ip = "{{ip}}";
+            window.initData.port = "{{initData['port']}}";
+            window.initData.ip = "{{initData['ip']}}";
+            window.initData.factorioPorts = {{initData['factorioPorts']}};
         </script>
         <script src="/assets/jquery/jquery-2.1.1.min.js"></script>
         <script src="/assets/uikit/js/uikit.min.js"></script>
-        <script src="/assets/uikit/js/components/pagination.min.js"></script>
-        <script src="/assets/uikit/js/components/notify.min.js"></script>
+        <script src="/assets/uikit/js/components/pagination.js"></script>
+        <script src="/assets/uikit/js/components/notify.js"></script>
         <script src="/assets/selectize/js/selectize.js"></script>
         <script src="/assets/handlebars.js"></script>
+        <script src="/assets/mustache.js"></script>
         <script src="/assets/custom/js/utils.js"></script>
         <script src="/assets/custom/js/wsCon.js"></script>
         {% block js %}

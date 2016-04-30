@@ -1,0 +1,28 @@
+{% extends base.html %}
+{% block css%}
+<link rel="stylesheet" type="text/css" href="/assets/custom/css/manage.css">
+{% end %}
+
+{% block content %}
+<form class="uk-form" onsubmit="return false;">
+<table class="uk-table uk-table-striped">
+    <caption>Running Factorio instances</caption>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Save</th>
+                <th>IP:Port</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+    <tbody id="list-content">
+    </tbody>
+</table></form>
+<h2>Logs</h2>
+<pre id="logs"></pre>
+{% end %}
+
+{% block js %}
+<script src="/assets/custom/js/manage.js"></script>
+{% end %}

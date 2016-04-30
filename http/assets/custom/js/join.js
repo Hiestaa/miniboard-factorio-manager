@@ -2,7 +2,7 @@ template = "\
 <tr>\
     <td>{{name}}</td>\
     <td>{{save}}</td>\
-    <td>{{port}}</td>\
+    <td>{{ip}}:{{port}}</td>\
     <td>{{name}}</td>\
 </tr>\
 "

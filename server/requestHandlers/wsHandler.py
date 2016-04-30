@@ -12,6 +12,8 @@ from tornado.websocket import WebSocketHandler
 from server.requestHandlers.websocketHandlers.echoHandler import EchoHandler
 from server.requestHandlers.websocketHandlers.systemUsageHandler import \
     SystemUsageHandler
+from server.requestHandlers.websocketHandlers.manageHandler import \
+    ManageHandler
 from tools import utils
 
 
@@ -31,10 +33,16 @@ class WSHandler(WebSocketHandler):
         logging.info("WebSocket opened")
         self._handlers = {
             EchoHandler.handlerKey: EchoHandler(
-                partial(self.writeMessage, handlerKey=EchoHandler.handlerKey)),
+                partial(self.writeMessage, handlerKey=EchoHandler.handlerKey),
+                self.error),
             SystemUsageHandler.handlerKey: SystemUsageHandler(
                 partial(self.writeMessage,
-                        handlerKey=SystemUsageHandler.handlerKey))
+                        handlerKey=SystemUsageHandler.handlerKey),
+                self.error),
+            ManageHandler.handlerKey: ManageHandler(
+                partial(self.writeMessage,
+                        handlerKey=ManageHandler.handlerKey),
+                self.error)
         }
 
     def writeMessage(self, message, handlerKey):
@@ -42,13 +50,23 @@ class WSHandler(WebSocketHandler):
         message['handlerKey'] = handlerKey
         self.write_message(json.dumps(message))
 
+    def error(self, message):
+        self.writeMessage({'message': message}, handlerKey='error')
+
     def on_message(self, message):
         t0 = time.time()
         message = json.loads(message)
-        self._handlers[message['handlerKey']].onMessage(message)
-        logging.info("Received message handler key: %s [%s]",
-                     message['handlerKey'], utils.timeFormat(
-                         time.time() - t0))
+        try:
+            self._handlers[message['handlerKey']].onMessage(message)
+        except Exception as e:
+            logging.exception(e)
+            self.writeMessage({
+                'message': "An error occurred, see logs for details."
+            }, handlerKey='error')
+        else:
+            logging.info("Received message handler key: %s [%s]",
+                         message['handlerKey'], utils.timeFormat(
+                             time.time() - t0))
 
     def on_close(self):
         logging.info("WebSocket closed")

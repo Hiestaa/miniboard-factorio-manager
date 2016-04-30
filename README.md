@@ -1,2 +1,2 @@
-# miniboard-factorio-manager
-A simple python server to manage the factorio server instances on my miniboard
+# py-vid-tagger
+A tool that lets you tag and filter your video library. Previews are provided to let you easily find what you are looking for. Based on python and web tools.

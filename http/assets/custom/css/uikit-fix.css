@@ -65,6 +65,10 @@ input {
     background-color: #0081C2;
 }
 
+.uk-form select {
+    font-size: 100% !important;
+}
+
 .uk-button-group .selectize-control:not(:first-child) .selectize-input {
     border-top-left-radius: 0px !important;
     border-bottom-left-radius: 0px !important;

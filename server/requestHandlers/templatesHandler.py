@@ -13,10 +13,15 @@ from conf import Conf
 
 class TemplatesHandler(RequestHandler):
     """Handle the requests of the root page"""
+    def _getInitData(self):
+        return dict(
+            port=Conf['server']['port'], ip=Conf['server']['ip'],
+            factorioPorts=Conf['factorio']['allowedPorts'])
+
     def get(self, filename=None):
         templateRoutes = {
             'join': 'join.html',
-            'manage': 'base.html',
+            'manage': 'manage.html',
             'saves': 'base.html',
             'monitor': 'base.html'
         }
@@ -24,12 +29,12 @@ class TemplatesHandler(RequestHandler):
         if filename is None or not filename:
             self.render(
                 'join.html', currentPage='home', fullWidth=False,
-                port=Conf['server']['port'], ip=Conf['server']['ip'])
+                initData=self._getInitData())
         elif filename in templateRoutes:
             self.render(templateRoutes[filename],
                         currentPage=filename,
                         debug=Conf['state'] == 'DEBUG',
-                        port=Conf['server']['port'], ip=Conf['server']['ip'],
+                        initData=self._getInitData(),
                         fullWidth=filename in fullWidth)
         elif filename.split('/')[0] in templateRoutes:
             splitted = filename.split('/')
@@ -41,7 +46,7 @@ class TemplatesHandler(RequestHandler):
             self.render(
                 templateRoutes[filename],
                 currentPage=filename, debug=Conf['state'] == 'DEBUG',
-                port=Conf['server']['port'], ip=Conf['server']['ip'],
+                initData=self._getInitData(),
                 fullWidth=filename in fullWidth,
                 **kwtargs)
         else:

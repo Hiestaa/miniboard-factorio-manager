@@ -10,7 +10,7 @@ class EchoHandler(object):
 
     handlerKey = 'echo'
 
-    def __init__(self, writeMessage):
+    def __init__(self, writeMessage, error):
         super(EchoHandler, self).__init__()
 
         self.writeMessage = writeMessage

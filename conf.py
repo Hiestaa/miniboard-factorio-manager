@@ -56,7 +56,7 @@ Conf = {
         'name': 'db/miniboard-factorio.db'
     },
     'server': {
-        'port': 6666,
+        'port': 15000,
         'ip': '',
         'assets': {
             'minifiedCleanups': [
@@ -65,5 +65,15 @@ Conf = {
             ],
             'minifyOnDebug': False
         },
+    },
+    'factorio': {
+        'allowedPorts': sorted(
+            [34197, 34190, 34191, 34192, 34193]),
+        'savesFolder': (
+            '/Users/romain/Library/Application Support/factorio/saves'),
+        'binary': '/Applications/factorio.app',
+        'configFolder': (
+            '/Users/romain/Library/Application Support/factorio/config'),
+        'autosaveInterval': 15  # in minutes
     }
 }

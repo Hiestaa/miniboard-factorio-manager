@@ -30,17 +30,32 @@ class InstanceService(Service):
             "status text)" % self._tableName)
 
     def schema(self):
-        return {
-            'name': True,
-            'save': False,
-            'port': True,
-            'status': False,
-        }
+        return [
+            ('_id', 'whatever'),
+            ('name', True),
+            ('save', False),
+            ('port', True),
+            ('status', False),
+        ]
 
     def insert(self, name, save=None, port=None, status='stopped', _id=None):
         logging.debug("Saving new instance: %s" % (name))
         if _id is None:
-            _id = uuid4()
+            _id = str(uuid4())
 
-        self.execute("INSERT INTO %s VALUES (?, ?, ?, ?, ?)",
-                     _id, name, save, port, status)
+        cur = self._connection.cursor()
+        cur.execute("INSERT INTO %s VALUES (?, ?, ?, ?, ?)" % self._tableName,
+                    (_id, name, save, port, status))
+        self._connection.commit()
+        return _id
+
+    def update(self, _id, name, save, port):
+        """
+        Update all the above in one request.
+        Call `set` to set only a single field.
+        """
+        cur = self._connection.cursor()
+        cur.execute(
+            "UPDATE %s SET name=?, save=?, port=? WHERE _id=?"
+            % (self._tableName), (name, save, port, _id))
+        self._connection.commit()
