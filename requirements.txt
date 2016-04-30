@@ -6,3 +6,6 @@ jsmin==2.2.1
 singledispatch==3.4.0.3
 six==1.10.0
 tornado==4.3
+psutil==4.1.0
+netifaces==0.10.4
+begin==0.2
